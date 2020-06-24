@@ -6,7 +6,6 @@ import re
 import xml.etree.ElementTree as ET
 import zipfile
 import tempfile
-impor shutil
 
 from django.core.files import File
 from django.core.files.storage import default_storage
