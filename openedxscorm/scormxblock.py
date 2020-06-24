@@ -5,6 +5,8 @@ import logging
 import re
 import xml.etree.ElementTree as ET
 import zipfile
+import tempfile
+impor shutil
 
 from django.core.files import File
 from django.core.files.storage import default_storage
@@ -23,6 +25,12 @@ def _(text):
 
 
 logger = logging.getLogger(__name__)
+
+
+
+
+
+
 
 
 @XBlock.wants("settings")
@@ -186,13 +194,15 @@ class ScormXBlock(XBlock):
                 'Removing previously unzipped "%s"', self.extract_folder_base_path
             )
             recursive_delete(self.extract_folder_base_path)
+        tmp_dir = tempfile.mkdtemp()
         with zipfile.ZipFile(package_file, "r") as scorm_zipfile:
             for zipinfo in scorm_zipfile.infolist():
+                tmp_file = scorm_zipfile.extract(zipinfo, tmp_dir)
                 default_storage.save(
                     os.path.join(self.extract_folder_path, zipinfo.filename),
-                    scorm_zipfile.open(zipinfo.filename),
+                    open(tmp_file,"rb"),
                 )
-
+                os.remove(tmp_file)
         try:
             self.update_package_fields()
         except ScormError as e:
