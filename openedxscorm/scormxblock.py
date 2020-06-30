@@ -196,6 +196,7 @@ class ScormXBlock(XBlock):
         tmp_dir = tempfile.mkdtemp()
         with zipfile.ZipFile(package_file, "r") as scorm_zipfile:
             for zipinfo in scorm_zipfile.infolist():
+                logger.info("Extracting SCORM file %s to %s",zipinfo.filename, tmp_dir)
                 tmp_file = scorm_zipfile.extract(zipinfo, tmp_dir)
                 default_storage.save(
                     os.path.join(self.extract_folder_path, zipinfo.filename),
