@@ -202,11 +202,13 @@ class ScormXBlock(XBlock):
                     open(tmp_file,"rb"),
                 )
                 os.remove(tmp_file)
+        logger.info('Scorm "%s" successfully extracted to %s', package_file, self.extract_folder_path)
         try:
             self.update_package_fields()
         except ScormError as e:
+            logger.error('Scorm "%s" produced the following error: %s', package_file, str(e.args[0]) )
             response["errors"].append(e.args[0])
-
+        logger.info('Scorm "%s" uploaded successfully!', package_file)
         return self.json_response(response)
 
     @property
@@ -332,6 +334,8 @@ class ScormXBlock(XBlock):
         """
         Update version and index page path fields.
         """
+        logger.info('Updating package fields for SCORM')
+
         self.index_page_path = ""
         imsmanifest_path = os.path.join(self.extract_folder_path, "imsmanifest.xml")
         try:
