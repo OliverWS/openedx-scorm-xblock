@@ -6,6 +6,7 @@ import re
 import xml.etree.ElementTree as ET
 import zipfile
 import tempfile
+import copy
 
 from django.core.files import File
 from django.core.files.storage import default_storage
@@ -178,6 +179,7 @@ class ScormXBlock(XBlock):
             return self.json_response(response)
 
         package_file = request.params["file"].file
+        package_file_backup = copy.deepcopy(package_file_backup) # Work around for https://github.com/jschneier/django-storages/issues/382
         self.update_package_meta(package_file)
 
         # First, save scorm file in the storage for mobile clients
@@ -194,7 +196,7 @@ class ScormXBlock(XBlock):
             )
             recursive_delete(self.extract_folder_base_path)
         tmp_dir = tempfile.mkdtemp()
-        with zipfile.ZipFile(package_file, "r") as scorm_zipfile:
+        with zipfile.ZipFile(package_file_backup, "r") as scorm_zipfile:
             for zipinfo in scorm_zipfile.infolist():
                 logger.info("Extracting SCORM file %s to %s",zipinfo.filename, tmp_dir)
                 tmp_file = scorm_zipfile.extract(zipinfo, tmp_dir)
