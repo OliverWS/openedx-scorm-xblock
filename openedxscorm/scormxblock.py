@@ -202,7 +202,7 @@ class ScormXBlock(XBlock):
                 tmp_file = scorm_zipfile.extract(zipinfo, tmp_dir)
                 default_storage.save(
                     os.path.join(self.extract_folder_path, zipinfo.filename),
-                    open(tmp_file,"r")
+                    open(tmp_file,"rb")
                 )
                 os.remove(tmp_file)
         logger.info('Scorm "%s" successfully extracted to %s', package_file, self.extract_folder_path)
