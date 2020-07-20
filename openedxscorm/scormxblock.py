@@ -195,17 +195,16 @@ class ScormXBlock(XBlock):
                 'Removing previously unzipped "%s"', self.extract_folder_base_path
             )
             recursive_delete(self.extract_folder_base_path)
-        #tmp_dir = tempfile.mkdtemp()
+        tmp_dir = tempfile.mkdtemp()
         with zipfile.ZipFile(package_file_backup, "r") as scorm_zipfile:
             for zipinfo in scorm_zipfile.infolist():
                 logger.info("Extracting SCORM file %s",zipinfo.filename)
-                #tmp_file = scorm_zipfile.extract(zipinfo, tmp_dir)
+                tmp_file = scorm_zipfile.extract(zipinfo, tmp_dir)
                 default_storage.save(
                     os.path.join(self.extract_folder_path, zipinfo.filename),
-                    scorm_zipfile.open(zipinfo.filename)
-                    #open(tmp_file,"r"),
+                    open(tmp_file,"r")
                 )
-                #os.remove(tmp_file)
+                os.remove(tmp_file)
         logger.info('Scorm "%s" successfully extracted to %s', package_file, self.extract_folder_path)
         try:
             self.update_package_fields()
